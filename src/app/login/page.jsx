@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { loginUser } from "../action/auth/loginUser";
+import { signIn } from "next-auth/react";
 
 export default function Login() {
   const [message, setMessage] = useState("");
@@ -13,18 +13,30 @@ export default function Login() {
     reset,
   } = useForm();
 
-  const onSubmit = async (data) => {
-    console.log(data)
-    const result = await loginUser(data);
+ const onSubmit = async (data) => {
+  try {
+    const res = await signIn("credentials", {
+      redirect: false, // don’t auto redirect
+      email: data.email,
+      password: data.password,
+    });
 
-    if (result.success) {
-      setMessage(`✅ ${result.message}`);
-      reset();
-      // TODO: redirect to dashboard or set auth state
+    if (res?.error) {
+      // ❌ Invalid credentials
+      setMessage("Invalid email or password");
+    } else if (res?.ok) {
+      // ✅ Successful login
+      alert("Login successful!");
+      window.location.href = "/"; // or use router.push("/")
     } else {
-      setMessage(`❌ ${result.message}`);
+      // ❓ Unexpected case
+      alert("Something went wrong. Please try again.");
     }
-  };
+  } catch (error) {
+    alert("Something went wrong. Please try again.");
+  }
+};
+
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

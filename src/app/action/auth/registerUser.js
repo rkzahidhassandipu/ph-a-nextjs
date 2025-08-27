@@ -1,7 +1,7 @@
 "use server";
 
 import bcrypt from "bcrypt";
-import dbConnect, { collectionNameObj } from "@/app/lib/dbConnect";
+import dbConnect, { collectionNameObj } from "@/lib/dbConnect";
 
 export const registerUser = async (payload) => {
   const usersCollection = dbConnect(collectionNameObj.usersCollection);
